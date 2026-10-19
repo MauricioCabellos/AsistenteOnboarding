@@ -44,10 +44,37 @@ def extraer_texto(datos):
     except (KeyError, IndexError):
         raise RuntimeError("La estructura de la respuesta no es la esperada")
 
+#función recibe la pregunta y devuelve los resultados
 def obtener_dato_de_prueba(pregunta):
     url, body = armar_peticion(pregunta)
     datos = enviar_peticion(url, body)
+    costo = calcular_costo(datos, 0.00000075, 0.00000375)
+    print(f"Costo de la petición: ${costo:.6f} USD")
     return extraer_texto(datos) 
+
+#Calcular Costos
+def calcular_costo(datos, precio_entrada, precio_salida):
+    uso = datos["usageMetadata"]
+    '''
+    uso = {
+        "promptTokenCount": 15,
+            "candidatesTokenCount": 457,
+            "totalTokenCount": 1214,
+            "promptTokensDetails": [
+                {
+                    "modality": "TEXT",
+                    "tokenCount": 15
+                }
+            ],
+            "thoughtsTokenCount": 742,
+            "serviceTier": "standard"
+    }
+    '''
+    tokens_entrada = uso["promptTokenCount"]
+    tokens_salida = uso["candidatesTokenCount"]
+    tokens_razonamiento = uso["thoughtsTokenCount"]
+    costo = (tokens_entrada * precio_entrada) + ((tokens_salida + tokens_razonamiento) * precio_salida)
+    return costo
 
 try:
     print(obtener_dato_de_prueba("Confirma en una frase corta que esta conexion funciona"))
