@@ -55,21 +55,6 @@ def obtener_dato_de_prueba(pregunta):
 #Calcular Costos
 def calcular_costo(datos, precio_entrada, precio_salida):
     uso = datos["usageMetadata"]
-    '''
-    uso = {
-        "promptTokenCount": 15,
-            "candidatesTokenCount": 457,
-            "totalTokenCount": 1214,
-            "promptTokensDetails": [
-                {
-                    "modality": "TEXT",
-                    "tokenCount": 15
-                }
-            ],
-            "thoughtsTokenCount": 742,
-            "serviceTier": "standard"
-    }
-    '''
     tokens_entrada = uso["promptTokenCount"]
     tokens_salida = uso["candidatesTokenCount"]
     tokens_razonamiento = uso["thoughtsTokenCount"]
