@@ -2,21 +2,26 @@ import os
 import requests
 from dotenv import load_dotenv
 
+import time #importar librería de tiempo para calcular latencia
+
 load_dotenv()
 
 #Variables constantes, son las que no cambian
-MODELO = "gemini-3.6-flash"
+MODELO = "gemini-3.5-flash"
 URL_BASE = "https://generativelanguage.googleapis.com/v1beta/models/"
 API_KEY = os.getenv("GEMINI_API_KEY")
 
 #función para crear la solicitud
-def armar_peticion(pregunta):
+def armar_peticion(modelo, pregunta, system_instruction):
     if not pregunta:
         raise ValueError("La pregunta no puede estar vacía.")
-    url = f"{URL_BASE}{MODELO}:generateContent?key={API_KEY}"
+    url = f"{URL_BASE}{modelo}:generateContent?key={API_KEY}"
     body = {
+        "systemInstruction": {
+            "parts": [ {"text": system_instruction} ]
+        },
         "contents": 
-        [{"parts": [{"text": pregunta}]}]
+            [{"parts": [{"text": pregunta}]}]
     }
     return url, body
 
@@ -46,8 +51,17 @@ def extraer_texto(datos):
 
 #función recibe la pregunta y devuelve los resultados
 def obtener_dato_de_prueba(pregunta):
-    url, body = armar_peticion(pregunta)
+    system_instruction = "Eres un asistente amigable y respondes en máximo 2 palabras."
+    url, body = armar_peticion("gemini-3.5-flash", pregunta, system_instruction)
+
+    inicio = time.perf_counter()  # Inicia el temporizador
+
     datos = enviar_peticion(url, body)
+
+    fin = time.perf_counter()  # Finaliza el temporizador
+    latencia = fin - inicio  # Calcula la latencia
+    print(f"Latencia: {latencia:.2f} segundos") # Imprime la latencia en segundos
+
     costo = calcular_costo(datos, 0.00000075, 0.00000375)
     print(f"Costo de la petición: ${costo:.6f} USD")
     return extraer_texto(datos) 
@@ -65,3 +79,4 @@ try:
     print(obtener_dato_de_prueba("Confirma en una frase corta que esta conexion funciona"))
 except (ValueError, RuntimeError) as error:
     print("No se pudo completar la operación: ", error)
+
