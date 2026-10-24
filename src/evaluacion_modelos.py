@@ -67,7 +67,7 @@ def calcular_costo(datos, precio_entrada, precio_salida):
     uso = datos["usageMetadata"]
     tokens_entrada = uso["promptTokenCount"]
     tokens_salida = uso["candidatesTokenCount"]
-    tokens_razonamiento = uso["thoughtsTokenCount", 0]
+    tokens_razonamiento = uso.get("thoughtsTokenCount", 0)
     costo = (tokens_entrada * precio_entrada) + ((tokens_salida + tokens_razonamiento) * precio_salida)
     return costo
 
@@ -88,11 +88,11 @@ precios_modelos = {
         "salida": 0.000000300   
     },
     "gemini-3.5-flash-lite": {
-        "entrada": 0.000000035, # Tarifa estimada para versión Lite
+        "entrada": 0.000000035,
         "salida": 0.000000150
     },
     "gemini-3.1-flash-lite": {
-        "entrada": 0.000000015, # Tarifa estimada para versión Lite antigua
+        "entrada": 0.000000015,
         "salida": 0.000000075
     }
 }
