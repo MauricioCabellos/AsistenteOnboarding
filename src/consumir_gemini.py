@@ -130,8 +130,10 @@ if __name__ == "__main__":
 
 el if al comienzo hace que solo se ejecute si el arvhico en el que estoy está siendo directamente ejecutado. No lo ejecuta en imports.
 """
+
+"""
 try:
     print(obtener_dato_de_prueba("Confirma en una frase corta que esta conexion funciona"))
 except (ValueError, RuntimeError) as error:
     print("No se pudo completar la operación: ", error)
-
+"""
