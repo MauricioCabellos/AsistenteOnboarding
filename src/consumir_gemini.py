@@ -43,6 +43,17 @@ def enviar_peticion(url, body):
     except requests.exceptions.Timeout:
         raise RuntimeError("Se agotó el tiempo de espera para la solicitud. Intenta de nuevo en unos momentos")
 
+    if respuesta.status_code in(401, 403):
+        raise ValueError("Credencial inválida o sin permiso. Revisa tu credencial de GEMINI_API_KEY")
+
+    if respuesta.status_code >= 500:
+        raise TimeoutError("El proveedor no pudo procesar la petición. Intenta de nuevo en unos momentos")
+
+    if respuesta.status_code == 429:
+        segundos = respuesta.headers.get("Retry-After")
+        mensaje = f"Límite excedido. Reintentar en {segundos}s." if segundos else "Límite excedido."
+        raise TimeoutError(mensaje)
+    
     if respuesta.status_code != 200:
         raise RuntimeError(f"Error en la petición. Status code: {respuesta.status_code}")
 
@@ -55,7 +66,7 @@ def enviar_peticion(url, body):
 def extraer_texto(datos):
     try:
         return datos["candidates"][0]["content"]["parts"][0]["text"]
-    except (KeyError, IndexError):
+    except (KeyError, IndexError, TimeoutError):
         raise RuntimeError("La estructura de la respuesta no es la esperada")
 
 #función recibe la pregunta y devuelve los resultados
@@ -110,7 +121,15 @@ def parsear_respuesta_json(texto, claves_requeridas=None):
             raise ValueError("La respuesta no tiene la estructura esperada.")
 
     return datos
+"""
+if __name__ == "__main__":
+    try:
+        print(obtener_dato_de_prueba("Confirma en una frase corta que esta conexion funciona"))
+    except (ValueError, RuntimeError) as error:
+        print("No se pudo completar la operación: ", error)
 
+el if al comienzo hace que solo se ejecute si el arvhico en el que estoy está siendo directamente ejecutado. No lo ejecuta en imports.
+"""
 try:
     print(obtener_dato_de_prueba("Confirma en una frase corta que esta conexion funciona"))
 except (ValueError, RuntimeError) as error:
