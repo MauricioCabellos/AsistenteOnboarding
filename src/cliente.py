@@ -3,7 +3,7 @@ import random
 
 from typing import Callable, Any
 
-from src.consumir_gemini import armar_peticion, extraer_texto, enviar_peticion, MODELO
+from .consumir_gemini import armar_peticion, extraer_texto, enviar_peticion, MODELO
 
 def con_reintento(
 	funcion: Callable[[], Any],

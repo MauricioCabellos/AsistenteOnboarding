@@ -1,0 +1,10 @@
+[
+  {
+    "consulta": "¿Cuándo se creó Python?",
+    "f1": 0.44,
+    "correccion_factual": "no",
+    "completitud": "si",
+    "contradiccion": "no",
+    "nota": "la respuesta da un año distinto al de la referencia"
+  }
+]
